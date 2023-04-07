@@ -8,13 +8,12 @@
         locking it</p>
 
     <script>
-            document.addEventListener("DOMContentLoaded", function (event) {
-                const blocks = 64 // Number of blocks to rea
-                const nfc = document.getElementById("nfc");
-        function download(filename) {
+
+    function download(filename) {
             var element = document.createElement('a');
             let array = new Array(blocks)
 
+    const nfc = document.getElementById("nfc");
 
             var text = nfc.value.split("\n");
 
@@ -67,6 +66,11 @@
             // Remove anchor from body
             document.body.removeChild(a)
         }
+                document.addEventListener("DOMContentLoaded", function (event) {
+                    const blocks = 64 // Number of blocks to rea
+                    const nfc = document.getElementById("nfc");
+
+
 
 
             // Allow for "Upload"
