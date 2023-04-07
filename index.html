@@ -8,13 +8,14 @@
         locking it</p>
 
     <script>
-        const blocks = 64 // Number of blocks to read
-
+            document.addEventListener("DOMContentLoaded", function (event) {
+                const blocks = 64 // Number of blocks to rea
+                const nfc = document.getElementById("nfc");
         function download(filename) {
             var element = document.createElement('a');
             let array = new Array(blocks)
 
-            const nfc = document.getElementById("nfc");
+
             var text = nfc.value.split("\n");
 
             const re = /Block (\d+): (([0-9a-fA-F]+ *)+)/gm
@@ -34,7 +35,7 @@
             let textHex = ""
             for (let i = 0; i < blocks; i++) {
                 console.log('block', i, array[i])
-                if (array[i] !== undefined && array[i]?.length==32) {
+                if (array[i] !== undefined && array[i]?.length == 32) {
                     textHex += array[i]
                     console.log("Writing block", i, array[i], "to text")
                 } else {
@@ -46,33 +47,49 @@
 
             var filename = Date.now() + ".bin"
             console.log(textHex)
-        
-        var bin = new Array();
-        for (var i=0; i<textHex.length/2; i++) {
-          var h = textHex.substr(i*2, 2);
-          bin[i] = parseInt(h,16);        
-        }
-  
-          var byteArray = new Uint8Array(bin);
-          var a = window.document.createElement('a');
-  
-          a.href = window.URL.createObjectURL(new Blob([byteArray], { type: 'application/octet-stream' }));
-          a.download = filename;
-  
-          // Append anchor to body.
-          document.body.appendChild(a)
-          a.click();
-  
-          // Remove anchor from body
-          document.body.removeChild(a)
+
+            var bin = new Array();
+            for (var i = 0; i < textHex.length / 2; i++) {
+                var h = textHex.substr(i * 2, 2);
+                bin[i] = parseInt(h, 16);
+            }
+
+            var byteArray = new Uint8Array(bin);
+            var a = window.document.createElement('a');
+
+            a.href = window.URL.createObjectURL(new Blob([byteArray], { type: 'application/octet-stream' }));
+            a.download = filename;
+
+            // Append anchor to body.
+            document.body.appendChild(a)
+            a.click();
+
+            // Remove anchor from body
+            document.body.removeChild(a)
         }
 
+
+            // Allow for "Upload"
+            const fileSelector = document.getElementById('file-selector');
+            fileSelector.addEventListener('change', (event) => {
+                const fileList = event.target.files;
+                console.log(fileList);
+                const reader = new FileReader();
+                reader.addEventListener('load', (event) => {
+                    console.log(event.target.result)
+                    nfc.value = event.target.result;
+                });
+                reader.readAsText(event.target.files[0]);
+            });
+        })
     </script>
 
 
     <button type="button" onclick="download('data.bin');">
         Click me to download your file</button>
     <p>Paste your .nfc file content here</p>
+    <br />
+    <input type="file" id="file-selector" accept=".nfc">
     <br />
     <textarea id="nfc" rows="20" cols="50"></textarea>
 
