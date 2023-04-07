@@ -3,18 +3,41 @@
 
 <body>
 
-    <h2>My First JavaScript</h2>
+    <h2>Mifare classic converter</h2>
     <p>I take absolutely no liabilty for use please verify the files yourself before writing to a card you can end up
-        locking it</p>
+        bricking your cards.</p>
+    <script src="./script.js"></script>
 
     <script>
-                                        const blocks = 64 // Number of blocks to rea
+        let cardSize = 1024 //1k card
+        let blocks = 64 // 1k card
+        let filename = Date.now()
 
-    function download(filename) {
-            var element = document.createElement('a');
+        document.addEventListener("DOMContentLoaded", function (event) {
+            const nfc = document.getElementById("nfc");
+            document.getElementById("file-selector").addEventListener("change", (event) => {
+                console.log(event.target.files[0])
+                if (event.target.files[0].name.endsWith(".bin")) {
+                    getBinaryFromFile(event.target.files[0]).then((data) => {
+                        filename = event.target.files[0].name.replace(".bin", "")
+                        const hexStr = generateNfcFromBinary(data);
+                        nfc.value = hexStr;
+                    })
+                } else if (event.target.files[0].name.endsWith(".nfc")) {
+                    getTextFromFile(event.target.files[0]).then((data) => {
+                        filename = event.target.files[0].name.replace(".nfc", "")
+                        nfc.value = data;
+                    })
+                } else {
+                    alert("Invalid file type");
+                    return
+                }
+            });
+        });
+
+        function bin() {
             let array = new Array(blocks)
-
-    const nfc = document.getElementById("nfc");
+            const nfc = document.getElementById("nfc");
 
             var text = nfc.value.split("\n");
 
@@ -33,6 +56,7 @@
                 }
             }
             let textHex = ""
+            console.log("number of blocks", blocks)
             for (let i = 0; i < blocks; i++) {
                 console.log('block', i, array[i])
                 if (array[i] !== undefined && array[i]?.length == 32) {
@@ -44,59 +68,27 @@
                     textHex += '00000000000000000000000000000000'
                 }
             }
-
-            var filename = Date.now() + ".bin"
-            console.log(textHex)
-
-            var bin = new Array();
-            for (var i = 0; i < textHex.length / 2; i++) {
-                var h = textHex.substr(i * 2, 2);
-                bin[i] = parseInt(h, 16);
-            }
-
-            var byteArray = new Uint8Array(bin);
-            var a = window.document.createElement('a');
-
-            a.href = window.URL.createObjectURL(new Blob([byteArray], { type: 'application/octet-stream' }));
-            a.download = filename;
-
-            // Append anchor to body.
-            document.body.appendChild(a)
-            a.click();
-
-            // Remove anchor from body
-            document.body.removeChild(a)
+            downloadBinFile(textHex, filename + ".bin")
         }
-                                    document.addEventListener("DOMContentLoaded", function (event) {
-                    const nfc = document.getElementById("nfc");
 
-
-
-
-            // Allow for "Upload"
-            const fileSelector = document.getElementById('file-selector');
-            fileSelector.addEventListener('change', (event) => {
-                const fileList = event.target.files;
-                console.log(fileList);
-                const reader = new FileReader();
-                reader.addEventListener('load', (event) => {
-                    console.log(event.target.result)
-                    nfc.value = event.target.result;
-                });
-                reader.readAsText(event.target.files[0]);
-            });
-        })
+        function nfc() {
+            downloadTextFile(document.getElementById("nfc").value, filename + ".nfc")
+        }
     </script>
 
 
-    <button type="button" onclick="download('data.bin');">
-        Click me to download your file</button>
-    <p>Paste your .nfc file content here</p>
-    <br />
-    <input type="file" id="file-selector" accept=".nfc">
-    <br />
-    <textarea id="nfc" rows="20" cols="50"></textarea>
+    <button type="button" onclick="bin()">
+        Download .bin
+    </button>
 
+    <button type="button" onclick="nfc()">
+        Download .nfc
+    </button>
+    <p>.nfc file content here</p>
+    <br />
+    <input type="file" id="file-selector" accept=".bin,.nfc">
+    <br />
+    <textarea id="nfc" rows="20" cols="90"></textarea>
 </body>
 
 </html>
