@@ -8,6 +8,7 @@
         locking it</p>
 
     <script>
+                                        const blocks = 64 // Number of blocks to rea
 
     function download(filename) {
             var element = document.createElement('a');
@@ -66,8 +67,7 @@
             // Remove anchor from body
             document.body.removeChild(a)
         }
-                document.addEventListener("DOMContentLoaded", function (event) {
-                    const blocks = 64 // Number of blocks to rea
+                                    document.addEventListener("DOMContentLoaded", function (event) {
                     const nfc = document.getElementById("nfc");
 
 
