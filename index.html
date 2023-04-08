@@ -9,14 +9,16 @@
         bricking your cards.</p>
     <script src="./script.js"></script>
 
+    <script src="./scripts/smartair.js"></script>
+
     <script>
         let cardSize = 1024 //1k card
         let blocks = 64 // 1k card
         let filename = Date.now()
-function updateCardSize(size) {
-    cardSize = size
-    blocks = size / 16
-}
+        function updateCardSize(size) {
+            cardSize = size
+            blocks = size / 16
+        }
         document.addEventListener("DOMContentLoaded", function (event) {
             const nfc = document.getElementById("nfc");
             document.getElementById("file-selector").addEventListener("change", (event) => {
@@ -89,6 +91,17 @@ function updateCardSize(size) {
         function nfc() {
             downloadTextFile(document.getElementById("nfc").value, filename + ".nfc")
         }
+
+        function smartAir() {
+            const nfc = document.getElementById("nfc");
+
+            const startSector = Number(document.getElementById("startSector").value)
+            const keyA = document.getElementById("keyA").value
+            const data = generateSmartAirCard(startSector, keyA)
+            console.log(data)
+            const hexStr = generateNfcFromBinary(data);
+            nfc.value = hexStr;
+        }
     </script>
 
 
@@ -104,6 +117,18 @@ function updateCardSize(size) {
     <input type="file" id="file-selector" accept=".bin,.nfc">
     <br />
     <textarea id="nfc" rows="20" cols="90"></textarea>
+    <br />
+    <p>Custom generation</p>
+    <p>What is this?</p>
+    <p>This is when someone fucked up big time and let us generate good credentials with little to no knowledge</p>
+    <div>
+        <p>Key A</p><input type="text" id="keyA" />
+        <p>StartSector</p><input type="text" id="startSector" />
+
+        <button type="button" onclick="smartAir()">
+            Make smartAirDump
+        </button>
+    </div>
 </body>
 
 </html>

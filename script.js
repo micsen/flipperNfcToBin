@@ -35,6 +35,7 @@ function downloadTextFile(text, filename) {
 
 
 function generateNfcFromBinary(data, uidLength = 4) {
+    console.log(data)
     const dataLen = data.length;
     const uid = data.slice(0, uidLength);
     if (dataLen != 1024 && dataLen != 4096) {
@@ -103,4 +104,18 @@ function printHex(data, lsbFirst = false) {
         hex += data[j].toString(16).padStart(2, '0') + " ";
     }
     return hex.trim();
+}
+
+function isBigSector(sector) {
+    return sector < 32;
+}
+
+function getBlocks(sector) {
+    if (sector < 32) {
+        const s = sector * 4
+        return {start: s, end: s + 3};
+    } else {
+        const s = 128 + (sector - 16) * 16
+        return {start: s, end: s + 15};
+    }
 }
