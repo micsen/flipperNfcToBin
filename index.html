@@ -2,16 +2,54 @@
 <html>
 
 <body>
+    <title>Flipper <-> Mifare classic Binary coverter</title>
 
     <h2>My First JavaScript</h2>
     <p>I take absolutely no liabilty for use please verify the files yourself before writing to a card you can end up
         locking it</p>
 
     <script>
-                                        const blocks = 64 // Number of blocks to rea
+        let cardSize = 1024 //1k card
+        let blocks = 64 // 1k card
+        let filename = Date.now()
+function updateCardSize(size) {
+    cardSize = size
+    blocks = size / 16
+}
+        document.addEventListener("DOMContentLoaded", function (event) {
+            const nfc = document.getElementById("nfc");
+            document.getElementById("file-selector").addEventListener("change", (event) => {
+                console.log(event.target.files[0])
+                if (event.target.files[0].name.endsWith(".bin")) {
+                    getBinaryFromFile(event.target.files[0]).then((data) => {
+                        filename = event.target.files[0].name.replace(".bin", "")
+                        const hexStr = generateNfcFromBinary(data);
+                        nfc.value = hexStr;
+                        updateCardSize(data.length)
+                    })
+                } else if (event.target.files[0].name.endsWith(".nfc")) {
+                    getTextFromFile(event.target.files[0]).then((data) => {
+                        filename = event.target.files[0].name.replace(".nfc", "")
+                        nfc.value = data;
+                        const re = /Mifare Classic type: (1K|4K)/
+                        const dec = re.exec(data)
+                        console.log(dec)
+                        if (dec) {
+                            if (dec[1] == "1K") {
+                                updateCardSize(1024)
+                            } else if (dec[1] == "4K") {
+                                updateCardSize(4096)
+                            }
+                        }
+                    })
+                } else {
+                    alert("Invalid file type");
+                    return
+                }
+            });
+        });
 
-    function download(filename) {
-            var element = document.createElement('a');
+        function bin() {
             let array = new Array(blocks)
 
     const nfc = document.getElementById("nfc");
