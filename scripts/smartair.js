@@ -34,8 +34,8 @@ function generateStartSector(keyA, uocBlock) {
     const uocBlockStr = `${uocBlock.toString(16).padStart(4, '0')}`
     let data = ""
     const systemID = keyA.substring(4, 12)
-    data += `181e${systemID}60f001002abe27790050`
-    data += `BC982DCC982345AA85000${uocBlockStr}0000000`
+    data += `181e${systemID}00FAF8FF2ABC06A5002A`
+    data += "BC983E4C982345AA8500008000000000"
     data += "00000000000000000000000000000000"
     data += trailer
     //console.log(data)
@@ -55,7 +55,7 @@ function generateUocSector(keyA) {
     const systemID = keyA.substring(4, 12)
     //280{log_block_start:04x}0001E00000{door_block_start:02x}0{num_doors:04x}00000000
     
-    const block0 = `28000000001E00000${doorBlockStart}0ffff00000000`
+    const block0 = "28000100001E000000C000CC00000000"
     data += block0
     data += block0
     data += "00000000000000002DBD06A600000000"
@@ -65,12 +65,13 @@ function generateUocSector(keyA) {
 }
 
 function fillSector(sector) {
-    const key = "ffffffffffff"
+   
+    const key = "FFFFFFFFFFFF"
     blocks = getBlocks(sector)
     const trailer = `${key}7f078800${key}`
     let data = ""
     for (let i = blocks.start; i < blocks.end; i++) {
-        data+="00000000000000000000000000000000"
+        data+="00010F0100020F0100030F0100040F01"
     }
     data+=trailer
     return data
@@ -98,10 +99,10 @@ function generateSmartAirCard(startSector, keyA) {
     for (let i = 0; i < 40; i++) {
         if (i == 0) {
             //Header block...
-            dat += "0B0227DFF108040001AB659E17B4CF1D"
-            dat += "6F015190519000000000000000000000"
+            dat += "0B0227DF5D880400C844002000000018"
             dat += "00000000000000000000000000000000"
-            dat += "A0A1A2A3A4A5787788C10D258FE90296"
+            dat += "00000000000000000000000000000000"
+            dat += "FFFFFFFFFFFFFF078069FFFFFFFFFFFF"
         } else if (i == startSector) {
             dat += generateStartSector(keyA, uocBlock)
         } else if (i == startSector+1) {
