@@ -64,16 +64,21 @@ function generateUocSector(keyA) {
     return data
 }
 
-function fillSector(sector) {
+function fillSector(sector, keyA) {
+    if (keyA.length != 12) {
+        //alert("KeyA must be 12 characters long")
+        throw "KeyA must be 12 characters long"
+    }
    
-    const key = "FFFFFFFFFFFF"
+    const keyB = "e7316853e731"
     blocks = getBlocks(sector)
-    const trailer = `${key}7f078800${key}`
+    const trailer = `${keyA}7f078800${keyB}`
     let data = ""
     for (let i = blocks.start; i < blocks.end; i++) {
         data+="00010F0100020F0100030F0100040F01"
     }
     data+=trailer
+    //console.log(data)
     return data
 }
 
@@ -99,7 +104,7 @@ function generateSmartAirCard(startSector, keyA) {
     for (let i = 0; i < 40; i++) {
         if (i == 0) {
             //Header block...
-            dat += "0B0227DF5D880400C844002000000018"
+            dat += "968B54145D880400C844002000000018"
             dat += "00000000000000000000000000000000"
             dat += "00000000000000000000000000000000"
             dat += "FFFFFFFFFFFFFF078069FFFFFFFFFFFF"
@@ -112,7 +117,7 @@ function generateSmartAirCard(startSector, keyA) {
             dat += data
             door = endDoorId+1
         } else {
-            dat += fillSector(i)
+            dat += fillSector(i, keyA)
         }
     }
     var bin = new Array();
