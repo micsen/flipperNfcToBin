@@ -74,16 +74,16 @@ function fillSector(sector, keyA) {
     blocks = getBlocks(sector)
     const trailer = `${keyA}7f078800${keyB}`
     let data = ""
-    for (let i = blocks.start; i < blocks.end; i++) {
-        data+="00010F0100020F0100030F0100040F01"
-    }
-    data+=trailer
+    data +="00010F0100020F0100030F0100040F01"
+    data +="00050F0100060F0100070F0100080F01"
+    data +="00090F01000A0F01000B0F00000C0F01"
+    data +=trailer
     //console.log(data)
     return data
 }
 
 function isBigSector(sector) {
-    return sector > 31;
+   return sector > 31;
 }
 
 function getBlocks(sector) {
@@ -95,6 +95,7 @@ function getBlocks(sector) {
         return {start: s, end: s + 15};
     }
 }
+
 
 function generateSmartAirCard(startSector, keyA) {
     let door = 0
